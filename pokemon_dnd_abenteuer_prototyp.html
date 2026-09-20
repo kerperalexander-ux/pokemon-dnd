@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pokémon D&D – Abenteuer-Prototyp</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#eef2ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1050px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+h1,h2,h3,p{margin-top:0}.muted{color:#aab3ca}.card{background:#151d31;border:1px solid #2b3856;border-radius:16px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+button,input,textarea{font:inherit}button{min-height:46px;border:1px solid #405071;border-radius:10px;background:#10172a;color:#fff;padding:9px 13px;cursor:pointer}button:hover{background:#26324c}
+.primary{background:#334a8f}.danger{background:#542d3b}.stat{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #29344d}.bar{height:10px;background:#303b54;border-radius:99px;overflow:hidden}.fill{height:100%;width:100%;background:#6ea8fe}.map{position:relative;min-height:310px;border-radius:14px;background:linear-gradient(145deg,#14251d,#1d3024);border:1px solid #3b5745;overflow:hidden}
+.node{position:absolute;padding:9px 11px;border:1px solid #78907c;border-radius:12px;background:#16251c;cursor:pointer}.node.active{outline:2px solid #a9d6b0}.path{position:absolute;height:3px;background:#66836e;transform-origin:left center}
+#log{max-height:210px;overflow:auto}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:#26324c;margin:2px;font-size:13px}
+textarea{width:100%;min-height:80px;background:#0e1526;color:#fff;border:1px solid #405071;border-radius:10px;padding:10px}
+@media(max-width:750px){.grid{grid-template-columns:1fr}.map{min-height:360px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+<div class="top"><div><div class="muted">POKÉMON × D&D</div><h1>Die Legende von Asteria</h1></div><div><button id="voice">🔊 Spielleiter</button><button id="reset" class="danger">↻ Neustart</button></div></div>
+
+<div class="grid">
+<main>
+<div class="card">
+<div class="muted">AKTUELLE SZENE</div><h2 id="sceneTitle">Das Flüstern im Wald</h2>
+<p id="story">Am Rand des Flüsterwaldes entdeckt die Trainerin ein blaues Leuchten. Ein unbekannter Ruf hallt zwischen den Bäumen. Ihr Pokémon spürt etwas, das ihr noch verborgen bleibt.</p>
+<p id="prompt"><strong>Was tut ihr?</strong></p>
+</div>
+
+<div class="card"><h3>🗺️ Asteria – Umgebung</h3>
+<div class="map">
+<div class="path" style="left:18%;top:62%;width:34%;transform:rotate(-22deg)"></div>
+<div class="path" style="left:48%;top:48%;width:28%;transform:rotate(18deg)"></div>
+<div class="path" style="left:49%;top:48%;width:27%;transform:rotate(-38deg)"></div>
+<button class="node" style="left:6%;top:65%" data-node="Dorf">🏡 Eichenhain</button>
+<button class="node" style="left:43%;top:42%" data-node="Wald">🌲 Flüsterwald</button>
+<button class="node" style="left:72%;top:22%" data-node="Ruinen">🏛️ Mondruinen</button>
+<button class="node" style="left:73%;top:62%" data-node="See">🌊 Silbersee</button>
+</div>
+<p id="location" class="muted">Position: Flüsterwald</p>
+</div>
+
+<div class="card"><h3>🎭 Entscheidungen</h3><div class="actions">
+<button data-act="explore">🌲 Wald erkunden</button><button data-act="follow">👂 Ruf folgen</button>
+<button data-act="ready">⚡ Pokémon vorbereiten</button><button data-act="call">🗣️ Rufen</button>
+<button data-act="search">🔎 Umgebung untersuchen</button><button data-act="camp">🔥 Lager aufschlagen</button>
+</div></div>
+
+<div class="card"><h3>🎲 Würfel</h3><button id="d20">W20</button><button id="d12">W12</button><button id="d10">W10</button><button id="d6">W6</button><span id="rollResult" class="tag">Noch kein Wurf</span></div>
+
+<div class="card"><h3>💡 Ideen für eure Runde</h3><p class="muted">Hier können Mitspieler Vorschläge für spätere Versionen sammeln.</p>
+<textarea id="ideas" placeholder="z. B. mehrere Trainer, eigene Pokémon, Arena-System, Musik, Bosse ..."></textarea>
+<button id="saveIdea" class="primary">Idee hinzufügen</button><div id="ideasList"></div></div>
+</main>
+
+<aside>
+<div class="card"><h3>🧑 Trainerin</h3><div class="stat"><span>Level</span><b>1</b></div><div class="stat"><span>EP</span><b>0 / 100</b></div><div class="stat"><span>Pokédollar</span><b>500 ₽</b></div><h3>🐾 Partner</h3><div class="stat"><span>Pikachu</span><b>Lv. 5</b></div><div class="bar"><div class="fill" id="hp" style="width:100%"></div></div><div class="muted">KP 20 / 20</div><p><span class="tag">Elektro</span><span class="tag">Donnerschock</span><span class="tag">Ruckzuckhieb</span></p></div>
+
+<div class="card"><h3>🎒 Inventar</h3><p>Pokéball × 5</p><p>Trank × 3</p><p>Beere × 2</p></div>
+
+<div class="card"><h3>📜 Protokoll</h3><div id="log"></div></div>
+</aside>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id), initialStory=$('story').textContent;
+const scenes={
+explore:["Flüsterwald","Die Trainerin geht tiefer in den Wald. Nebel zieht auf. Zwischen den Bäumen huscht etwas Kleines vorbei.","Ein Rascheln kommt näher."],
+follow:["Die blaue Spur","Die leuchtenden Fußspuren führen zu einem umgestürzten Baum. Dahinter liegt ein alter, zerbrochener Pokéball.","Vielleicht ist er Teil eines viel älteren Geheimnisses."],
+ready:["Bereit zum Kampf","Pikachu stellt sich schützend vor die Trainerin. Das blaue Licht reagiert auf seine Energie.","Ein unbekanntes Pokémon könnte gleich auftauchen."],
+call:["Eine Antwort","Die Trainerin ruft in den Wald. Eine Stimme antwortet aus der Dunkelheit: „Ihr solltet nicht hier sein …“","Der Wald wird plötzlich still."],
+search:["Spuren","Im Moos finden sich drei verschiedene Fußspuren. Eine davon gehört offenbar keinem bekannten Pokémon.","Die Spur führt Richtung Mondruinen."],
+camp:["Nacht im Wald","Die Trainerin errichtet ein kleines Lager. In der Ferne erscheint für einen Moment eine riesige Silhouette am Himmel.","Am Morgen könnte sich etwas verändert haben."]
+};
+function log(t){const d=document.createElement('div');d.textContent="• "+t;$('log').prepend(d)}
+document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{const s=scenes[b.dataset.act];$('sceneTitle').textContent=s[0];$('story').textContent=s[1];$('prompt').textContent=s[2];log(s[1])});
+document.querySelectorAll('[data-node]').forEach(b=>b.onclick=()=>{$('location').textContent="Position: "+b.dataset.node;document.querySelectorAll('.node').forEach(x=>x.classList.remove('active'));b.classList.add('active');log("Reiseziel gewählt: "+b.dataset.node)});
+[['d20',20],['d12',12],['d10',10],['d6',6]].forEach(([id,n])=>$(id).onclick=()=>{let r=Math.floor(Math.random()*n)+1;$('rollResult').textContent='W'+n+' → '+r;log('W'+n+' = '+r)});
+$('voice').onclick=()=>{if(!('speechSynthesis'in window)){log('Audioausgabe wird in diesem Browser nicht unterstützt.');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance($('story').textContent+" "+$('prompt').textContent);u.lang='de-DE';u.rate=.92;speechSynthesis.speak(u);log('Spielleiter liest die Szene vor.')};
+$('saveIdea').onclick=()=>{let v=$('ideas').value.trim();if(!v)return;let p=document.createElement('span');p.className='tag';p.textContent=v;$('ideasList').appendChild(p);$('ideas').value='';log('Neue Idee gesammelt: '+v)};
+$('reset').onclick=()=>{location.reload()};
+</script>
+</body>
+</html>
